@@ -1,21 +1,48 @@
-import { StyleSheet, View, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-import { Feather, Fontisto, MaterialCommunityIcons } from "react-native-vector-icons";
+import { MaterialCommunityIcons } from "react-native-vector-icons";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Header = () => {
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
+  const handleLogout = () => {
+    AsyncStorage.removeItem("@user");
+    setDropdownVisible(false);
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>WhatsApp</Text>
-        
-        <View style={styles.iconContainer}>
-          <Feather name="camera" size={20} color="white" style={styles.icon} />
-          <Fontisto name="search" size={20} color="white" style={styles.icon} />
-          <MaterialCommunityIcons name="dots-vertical" size={21} color="white" style={styles.icon} />
+        <Text style={styles.headerText}>FaceCall</Text>
 
+        <View style={styles.iconContainer}>
+          <TouchableOpacity onPress={toggleDropdown}>
+            <MaterialCommunityIcons name="dots-vertical" size={21} color="white" style={styles.icon} />
+          </TouchableOpacity>
         </View>
       </View>
+
+      {/* {dropdownVisible && (
+        <View style={styles.dropdownContainer}>
+          <TouchableOpacity onPress={handleLogout} style={styles.dropdownOption}>
+            <Text style={styles.dropdownOptionText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )} */}
+      
+      {<View style={styles.dropdownContainer}>
+          <TouchableOpacity onPress={handleLogout} style={styles.dropdownOption}>
+            <Text style={styles.dropdownOptionText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      }
     </View>
   );
 };
@@ -23,31 +50,56 @@ const Header = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#0e806a",
-    paddingTop: 40,
-    paddingBottom: 8,
+    paddingTop: 15,
+    paddingBottom: 15,
   },
 
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginHorizontal: 16
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 16,
   },
 
   headerText: {
     fontSize: 20,
-    color: 'white',
-    fontWeight: '500'
+    color: "white",
+    fontWeight: "500",
   },
 
   iconContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   icon: {
-    marginLeft: 20
-  }
+    marginLeft: 20,
+  },
+
+  dropdownContainer: {
+    backgroundColor: "white",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    width: 85,
+    borderRadius: 20,
+    
+    marginTop: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginRight: 50,
+    position: "absolute",
+    bottom: 4, 
+  },
+  
+  dropdownOption: {
+    paddingVertical: 8,
+  },
+  
+  dropdownOptionText: {
+    fontSize: 16,
+    color: "black",
+  },
+  
 });
 
 export default Header;

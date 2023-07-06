@@ -3,6 +3,7 @@ import React from "react";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import Chat from "./screens/Chat";
+import SignIn from "./screens/SignIn";
 
 const Tab = createMaterialTopTabNavigator();
 

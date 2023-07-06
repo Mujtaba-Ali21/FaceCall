@@ -10,7 +10,7 @@ import React, { useState, useEffect } from "react";
 
 import userIcon from "../../assets/user-icon.png";
 
-const Chat = () => {
+const Chat = ({ user }) => {
   const DATA = [
     {
       id: 1,
@@ -63,22 +63,24 @@ const Chat = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={chatData}
+        data={[user]}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.chatContainer}>
-            <Image source={item.photos} style={styles.image} />
+            <Image source={item.picture} style={styles.image} />
             <View style={styles.chatContent}>
               <View style={styles.chatHeader}>
                 <View style={styles.chatInfo}>
                   <Text style={styles.chatName}>{item.name}</Text>
-                  <Text style={styles.lastMessage} numberOfLines={1}>{item.lastMessage}</Text>
+                  <Text style={styles.lastMessage} numberOfLines={1}>
+                    {item.lastMessage}
+                  </Text>
                 </View>
                 <View>
                   <Text style={styles.chatTime}>{item.time}</Text>
-                  { item.totalUnread > 0 && (
+                  {item.totalUnread > 0 && (
                     <View style={styles.unreadContainer}>
-                        <Text style={styles.totalUnread}>{item.totalUnread}</Text>
+                      <Text style={styles.totalUnread}>{item.totalUnread}</Text>
                     </View>
                   )}
                 </View>

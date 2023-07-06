@@ -1,99 +1,80 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
-import React, { useState } from 'react';
+import { StyleSheet, View, Text, Image, Button } from "react-native";
+import * as React from "react";
 
-import { signIn, signUp } from '../../firebase';
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
 
-const SignIn = ({ currentUser }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [mode, setMode] = useState('signUp');
-  const [errorMessage, setErrorMessage] = useState('');
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-  async function handleSubmit() {
-    if (mode === 'signUp') {
-      try {
-        await signUp(email, password);
-        console.log('User signed up successfully!');
-      } catch (error) {
-        console.log('Error signing up:', error.message);
+WebBrowser.maybeCompleteAuthSession();
+
+const SignIn = () => {
+  const [userInfo, setUserInfo] = React.useState(null);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId:
+      "283875335460-7k7upo9v4ihc6smvdp5fp9ubr8lk9kt4.apps.googleusercontent.com",
+    webClientId:
+      "283875335460-nqf5a7bhb2mn2jm5aur70i5kelbi4ntg.apps.googleusercontent.com",
+  });
+
+  React.useEffect(() => {
+    handleSignInWithGoogle();
+  }, [response]);
+
+  async function handleSignInWithGoogle() {
+    const user = await AsyncStorage.getItem("@user");
+
+    if (!user) {
+      if (response?.type === "success") {
+        await getUserInfo(response.authentication.accessToken);
       }
-    }
-
-    if (mode === 'signIn') {
-      try {
-        await signIn(email, password);
-        console.log('User signed in successfully!');
-      } catch (error) {
-        console.log('Error signing in:', error.message);
-      }
+    } else {
+      setUserInfo(JSON.parse(user));
     }
   }
 
-  if (currentUser) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorMessage}>You are already signed in!</Text>
-      </View>
-    );
-  }
+  const getUserInfo = async (token) => {
+    if (!token) return;
+    try {
+      const response = await fetch(
+        "https://www.googleapis.com/userinfo/v2/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const user = await response.json();
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserInfo(user);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("@user");
+    setUserInfo(null);
+  };
 
   return (
     <View style={styles.loginContainer}>
       <Image
-        source={require('../../assets/welcome-img.png')}
+        source={require("../../assets/welcome-img.png")}
         style={styles.welcomeImage}
       />
 
       <Text style={styles.welcomeText}>Welcome To WhatsApp</Text>
-
-      <View style={{ marginTop: 20 }}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          style={styles.textInput}
-        />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-          style={styles.textInput}
-        />
-      </View>
-
-      {errorMessage ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorMessage}>{errorMessage}</Text>
-        </View>
-      ) : null}
+      <Text style={styles.welcomeText}>{JSON.stringify(userInfo, null, 2)}</Text>
 
       <View style={{ marginTop: 20 }}>
         <Button
-          title={mode === 'signUp' ? 'Sign Up' : 'Login'}
-          disabled={!password || !email}
           color="#25D366"
-          onPress={handleSubmit}
+          title="Sign In With Google"
+          onPress={() => promptAsync()}
         />
+        <Button color="#25D366" title="Logout" onPress={() => handleLogout()} />
       </View>
-      <TouchableOpacity
-        style={{ marginTop: 15 }}
-        onPress={() => (mode === 'signUp' ? setMode('signIn') : setMode('signUp'))}
-      >
-        <Text style="#757575">
-          {mode === 'signUp'
-            ? "Already have an Account? Sign In"
-            : "Don't have an Account? Sign Up"}
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -101,13 +82,13 @@ const SignIn = ({ currentUser }) => {
 const styles = StyleSheet.create({
   loginContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
   },
 
   welcomeText: {
-    color: '#075e54',
+    color: "#075e54",
     fontSize: 24,
     marginTop: 20,
   },
@@ -115,11 +96,11 @@ const styles = StyleSheet.create({
   welcomeImage: {
     width: 280,
     height: 280,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
 
   textInput: {
-    borderBottomColor: '#075e54',
+    borderBottomColor: "#075e54",
     borderBottomWidth: 2,
     marginBottom: 30,
     width: 200,
@@ -127,13 +108,13 @@ const styles = StyleSheet.create({
 
   errorContainer: {
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   errorMessage: {
-    color: 'red',
+    color: "red",
     fontSize: 16,
   },
 });
 
-export default SignIn;  
+export default SignIn;

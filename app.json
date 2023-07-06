@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "WhatsApp",
-    "slug": "WhatsApp",
+    "name": "FaceCall",
+    "slug": "FaceCall",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.zafar.FaceCall"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "scheme": "FaceCall",
+    "extra": {
+      "eas": {
+        "projectId": "9de8bb51-ccf0-434c-b712-d238fba72adc"
+      }
     }
   }
 }
