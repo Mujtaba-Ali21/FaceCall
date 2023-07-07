@@ -29,20 +29,19 @@ const Header = () => {
         </View>
       </View>
 
-      {/* {dropdownVisible && (
-        <View style={styles.dropdownContainer}>
-          <TouchableOpacity onPress={handleLogout} style={styles.dropdownOption}>
-            <Text style={styles.dropdownOptionText}>Logout</Text>
-          </TouchableOpacity>
+      {dropdownVisible && (
+        <>
+          <View style={styles.dropdownContainer}>
+            <TouchableOpacity onPress={handleLogout} style={styles.dropdownOption}>
+              <Text style={styles.dropdownOptionText}>Logout</Text>
+            </TouchableOpacity>
         </View>
-      )} */}
-      
-      {<View style={styles.dropdownContainer}>
-          <TouchableOpacity onPress={handleLogout} style={styles.dropdownOption}>
-            <Text style={styles.dropdownOptionText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      }
+        <View style={styles.dropdownContainerBorder}> 
+            
+          </View>
+        </>
+      )}
+       
     </View>
   );
 };
@@ -81,14 +80,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-end",
     width: 85,
-    borderRadius: 20,
-    
+    borderRadius: 12,
     marginTop: 8,
     paddingVertical: 6,
     paddingHorizontal: 12,
-    marginRight: 50,
+    marginRight: 40,
     position: "absolute",
     bottom: 4, 
+  },
+
+  dropdownContainerBorder: {
+    backgroundColor: "white",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    width: 15,
+    borderBottomEndRadius: 10,
+    paddingVertical: 6,
+    marginRight: 30,
+    position: "absolute",
+    bottom: 20,
   },
   
   dropdownOption: {
